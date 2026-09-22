@@ -1,0 +1,2 @@
+# Used for deterministic descriptive bootstrap analysis; Go core does not use it.
+numpy==2.3.5

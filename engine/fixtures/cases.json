@@ -1,0 +1,417 @@
+{
+  "evidence_class": "unit_fixture_not_research_experiment",
+  "cases": [
+    {
+      "id": "arithmetic_tradeoff_only",
+      "information_version": "new-unit-fixture-v1",
+      "status": "deviation",
+      "config": {
+        "horizon": 1,
+        "discount": 0.97,
+        "alpha": 0.95,
+        "risk_weight": 0.35,
+        "risk_limit": 1.25
+      },
+      "baseline_id": "u0",
+      "required_constraints": [
+        "fixture_resource_check"
+      ],
+      "scenarios": [
+        {
+          "id": "a",
+          "probability": 0.8
+        },
+        {
+          "id": "b",
+          "probability": 0.15
+        },
+        {
+          "id": "c",
+          "probability": 0.05
+        }
+      ],
+      "candidates": [
+        {
+          "id": "u0",
+          "action_cost": 0,
+          "plan_distance": 0,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 0
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u1",
+          "action_cost": 0.05,
+          "plan_distance": 0.1,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 0
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                1
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                1
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "normal_fixture",
+      "information_version": "new-unit-fixture-v1",
+      "status": "normal",
+      "config": {
+        "horizon": 1,
+        "discount": 0.97,
+        "alpha": 0.95,
+        "risk_weight": 0.35,
+        "risk_limit": 1.25
+      },
+      "baseline_id": "u0",
+      "required_constraints": [
+        "fixture_resource_check"
+      ],
+      "scenarios": [],
+      "candidates": []
+    },
+    {
+      "id": "data_quality_incident_fixture",
+      "information_version": "new-unit-fixture-v1",
+      "status": "data_quality_incident",
+      "config": {
+        "horizon": 1,
+        "discount": 0.97,
+        "alpha": 0.95,
+        "risk_weight": 0.35,
+        "risk_limit": 1.25
+      },
+      "baseline_id": "u0",
+      "required_constraints": [
+        "fixture_resource_check"
+      ],
+      "scenarios": [],
+      "candidates": []
+    },
+    {
+      "id": "all_hard_inadmissible_fixture",
+      "information_version": "new-unit-fixture-v1",
+      "status": "deviation",
+      "config": {
+        "horizon": 1,
+        "discount": 0.97,
+        "alpha": 0.95,
+        "risk_weight": 0.35,
+        "risk_limit": 1.25
+      },
+      "baseline_id": "u0",
+      "required_constraints": [
+        "fixture_resource_check"
+      ],
+      "scenarios": [
+        {
+          "id": "a",
+          "probability": 0.8
+        },
+        {
+          "id": "b",
+          "probability": 0.15
+        },
+        {
+          "id": "c",
+          "probability": 0.05
+        }
+      ],
+      "candidates": [
+        {
+          "id": "u0",
+          "action_cost": 0,
+          "plan_distance": 0,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 1
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u1",
+          "action_cost": 0.05,
+          "plan_distance": 0.1,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 1
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                1
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                1
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all_risk_inadmissible_fixture",
+      "information_version": "new-unit-fixture-v1",
+      "status": "deviation",
+      "config": {
+        "horizon": 1,
+        "discount": 0.97,
+        "alpha": 0.95,
+        "risk_weight": 0.35,
+        "risk_limit": 0.1
+      },
+      "baseline_id": "u0",
+      "required_constraints": [
+        "fixture_resource_check"
+      ],
+      "scenarios": [
+        {
+          "id": "a",
+          "probability": 0.8
+        },
+        {
+          "id": "b",
+          "probability": 0.15
+        },
+        {
+          "id": "c",
+          "probability": 0.05
+        }
+      ],
+      "candidates": [
+        {
+          "id": "u0",
+          "action_cost": 0,
+          "plan_distance": 0,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 0
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u1",
+          "action_cost": 0.05,
+          "plan_distance": 0.1,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 0
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                1
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                1
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all_zero_losses_fixture",
+      "information_version": "new-unit-fixture-v1",
+      "status": "deviation",
+      "config": {
+        "horizon": 1,
+        "discount": 0.97,
+        "alpha": 0.95,
+        "risk_weight": 0.35,
+        "risk_limit": 1.25
+      },
+      "baseline_id": "u0",
+      "required_constraints": [
+        "fixture_resource_check"
+      ],
+      "scenarios": [
+        {
+          "id": "a",
+          "probability": 0.8
+        },
+        {
+          "id": "b",
+          "probability": 0.15
+        },
+        {
+          "id": "c",
+          "probability": 0.05
+        }
+      ],
+      "candidates": [
+        {
+          "id": "u0",
+          "action_cost": 0,
+          "plan_distance": 0,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 0
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u1",
+          "action_cost": 0,
+          "plan_distance": 0,
+          "constraints": [
+            {
+              "id": "fixture_resource_check",
+              "residual": 0
+            }
+          ],
+          "trajectories": [
+            {
+              "scenario_id": "a",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "b",
+              "period_losses": [
+                0
+              ]
+            },
+            {
+              "scenario_id": "c",
+              "period_losses": [
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

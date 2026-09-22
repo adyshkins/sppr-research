@@ -1,0 +1,36 @@
+{
+  "scope": "final API binary after required-field validation, persisted R08 jobs recovered after restart",
+  "restored_jobs": 5,
+  "restored_episodes": 20,
+  "negative_http_checks": [
+    {
+      "request": "{\"profile\":\"S\",\"arms\":[\"H\"]}",
+      "status": 422
+    },
+    {
+      "request": "{\"profile\":\"S\",\"repeat\":null,\"arms\":[\"H\"]}",
+      "status": 422
+    },
+    {
+      "request": "{\"profile\":\"S\",\"repeat\":0,\"repeat\":1,\"arms\":[\"H\"]}",
+      "status": 422
+    },
+    {
+      "request": "[]",
+      "status": 422
+    },
+    {
+      "request": "null",
+      "status": 422
+    },
+    {
+      "request": "replay null",
+      "status": 422
+    },
+    {
+      "request": "cancel null",
+      "status": 422
+    }
+  ],
+  "passed": true
+}

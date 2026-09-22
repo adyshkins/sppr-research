@@ -1,0 +1,14 @@
+{
+  "build": "offline render of independent harness using captured API responses; no browser network requests; NOT Vite production",
+  "passed": true,
+  "checks": [
+    "capability reflects connected R08 engine",
+    "F10/E11 execution remains explicitly disabled",
+    "computed S results and four verified replay counters displayed",
+    "four primary-file download groups visible",
+    "mobile page width does not overflow; tables scroll inside their container",
+    "E11 profile tab remains available",
+    "imported series storage is separate and empty; no article values fabricated",
+    "no browser JavaScript exceptions"
+  ]
+}

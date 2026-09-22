@@ -1,0 +1,892 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SPPR Research Workbench",
+    "version": "0.3.0-dev",
+    "description": "Local research workbench: preserved DEV-R08 engine 0.8, asynchronous execution and replay, plus structural import/analysis of F10/E11 summaries. Execution of F10/E11 is not implemented by the available archive. Loopback only."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:18081"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Service health",
+        "responses": {
+          "200": {
+            "description": "Service health"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          }
+        }
+      }
+    },
+    "/api/research/spec": {
+      "get": {
+        "summary": "Article design and policy descriptions",
+        "responses": {
+          "200": {
+            "description": "Article design and policy descriptions"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          }
+        }
+      }
+    },
+    "/api/research/capabilities": {
+      "get": {
+        "summary": "Available functions and blockers",
+        "responses": {
+          "200": {
+            "description": "Available functions and blockers"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          }
+        }
+      }
+    },
+    "/api/research/openapi.json": {
+      "get": {
+        "summary": "API specification",
+        "responses": {
+          "200": {
+            "description": "API specification"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          }
+        }
+      }
+    },
+    "/api/research/profile/validate": {
+      "post": {
+        "summary": "Validate raw E11 CSV",
+        "responses": {
+          "200": {
+            "description": "Validate raw E11 CSV"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          },
+          "413": {
+            "description": "Payload too large"
+          },
+          "415": {
+            "description": "Content type invalid"
+          },
+          "422": {
+            "description": "Bundle or seed invalid"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/csv": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/runs": {
+      "get": {
+        "summary": "List imports",
+        "responses": {
+          "200": {
+            "description": "List imports"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Import a complete summary bundle",
+        "responses": {
+          "201": {
+            "description": "Import a complete summary bundle"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          },
+          "413": {
+            "description": "Payload too large"
+          },
+          "415": {
+            "description": "Content type invalid"
+          },
+          "422": {
+            "description": "Bundle or seed invalid"
+          },
+          "507": {
+            "description": "Storage quota exceeded"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Bundle"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/runs/{id}": {
+      "get": {
+        "summary": "Manifest, structural checks and means",
+        "responses": {
+          "200": {
+            "description": "Manifest, structural checks and means"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/research/runs/{id}/download": {
+      "get": {
+        "summary": "Download original bytes",
+        "responses": {
+          "200": {
+            "description": "Download original bytes"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/research/runs/{id}/analysis": {
+      "post": {
+        "summary": "New paired bootstrap analysis",
+        "responses": {
+          "200": {
+            "description": "New paired bootstrap analysis"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "413": {
+            "description": "Payload too large"
+          },
+          "415": {
+            "description": "Content type invalid"
+          },
+          "422": {
+            "description": "Bundle or seed invalid"
+          },
+          "429": {
+            "description": "Analysis busy"
+          },
+          "408": {
+            "description": "Analysis cancelled"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "seed"
+                ],
+                "properties": {
+                  "seed": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/experiments": {
+      "post": {
+        "summary": "Blocked: engine missing",
+        "responses": {
+          "409": {
+            "description": "Blocked: engine missing"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          }
+        }
+      }
+    },
+    "/api/research/runs/{id}/replay": {
+      "post": {
+        "summary": "Blocked: engine missing",
+        "responses": {
+          "409": {
+            "description": "Blocked: engine missing"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "500": {
+            "description": "Storage or integrity error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/research/r08/jobs": {
+      "get": {
+        "summary": "List new local R08 runs",
+        "tags": [
+          "DEV-R08"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "409": {
+            "description": "State or binary version conflict"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "429": {
+            "description": "One job at a time"
+          },
+          "503": {
+            "description": "R08 binary not connected"
+          },
+          "507": {
+            "description": "Local storage quota reached"
+          }
+        }
+      }
+    },
+    "/api/research/r08/experiments": {
+      "post": {
+        "summary": "Start archived R08 configurations, never F10/E11",
+        "tags": [
+          "DEV-R08"
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "409": {
+            "description": "State or binary version conflict"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "429": {
+            "description": "One job at a time"
+          },
+          "503": {
+            "description": "R08 binary not connected"
+          },
+          "507": {
+            "description": "Local storage quota reached"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/R08Request"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/r08/jobs/{id}": {
+      "get": {
+        "summary": "Inspect job progress and computed summaries",
+        "tags": [
+          "DEV-R08"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "409": {
+            "description": "State or binary version conflict"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "429": {
+            "description": "One job at a time"
+          },
+          "503": {
+            "description": "R08 binary not connected"
+          },
+          "507": {
+            "description": "Local storage quota reached"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/research/r08/jobs/{id}/replay": {
+      "post": {
+        "summary": "Recompute recorded observations in the unchanged engine",
+        "tags": [
+          "DEV-R08"
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "409": {
+            "description": "State or binary version conflict"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "429": {
+            "description": "One job at a time"
+          },
+          "503": {
+            "description": "R08 binary not connected"
+          },
+          "507": {
+            "description": "Local storage quota reached"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/r08/jobs/{id}/cancel": {
+      "post": {
+        "summary": "Cancel current process",
+        "tags": [
+          "DEV-R08"
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "409": {
+            "description": "State or binary version conflict"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "429": {
+            "description": "One job at a time"
+          },
+          "503": {
+            "description": "R08 binary not connected"
+          },
+          "507": {
+            "description": "Local storage quota reached"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/r08/jobs/{id}/episodes/{index}/files/{name}": {
+      "get": {
+        "summary": "Download hash-verified primary output",
+        "tags": [
+          "DEV-R08"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Host or Origin rejected"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "409": {
+            "description": "State or binary version conflict"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "429": {
+            "description": "One job at a time"
+          },
+          "503": {
+            "description": "R08 binary not connected"
+          },
+          "507": {
+            "description": "Local storage quota reached"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$"
+            }
+          },
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 239
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "experiment_config.json",
+                "controller.jsonl.gz",
+                "physical.jsonl.gz",
+                "summary.json",
+                "COMPLETED.json"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Bundle": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "purpose",
+          "series",
+          "manifest",
+          "episodes"
+        ],
+        "properties": {
+          "schema": {
+            "const": "sppr-results-v1"
+          },
+          "purpose": {
+            "enum": [
+              "research_import",
+              "software_test"
+            ]
+          },
+          "series": {
+            "enum": [
+              "F10",
+              "E11"
+            ]
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/Manifest"
+          },
+          "episodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Episode"
+            },
+            "minItems": 672,
+            "maxItems": 840
+          }
+        },
+        "description": "Complete Cartesian design: 840 F10 or 672 E11 episodes. This is a NEW interchange format, not a claim about the native engine archive format."
+      },
+      "Manifest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "engine_version",
+          "source_sha256",
+          "config_sha256",
+          "input_sha256",
+          "plan_sha256"
+        ],
+        "properties": {
+          "engine_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "source_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "config_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "plan_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        }
+      },
+      "Episode": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "group",
+          "replication",
+          "policy",
+          "horizon_days",
+          "environment_sha256",
+          "forecast_steps",
+          "total_loss",
+          "kpi_loss",
+          "action_cost"
+        ],
+        "properties": {
+          "group": {
+            "enum": [
+              "normal",
+              "S",
+              "C",
+              "D",
+              "DS",
+              "W1",
+              "W2",
+              "W3",
+              "W4"
+            ]
+          },
+          "replication": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 23
+          },
+          "policy": {
+            "enum": [
+              "B00",
+              "H0",
+              "EM0",
+              "F",
+              "S",
+              "A",
+              "G"
+            ]
+          },
+          "horizon_days": {
+            "const": 60
+          },
+          "environment_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "forecast_steps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000000
+          },
+          "total_loss": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000
+          },
+          "kpi_loss": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000
+          },
+          "action_cost": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000
+          }
+        }
+      },
+      "R08Request": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "profile",
+          "repeat",
+          "arms"
+        ],
+        "properties": {
+          "profile": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "S",
+              "C",
+              "D",
+              "DS"
+            ]
+          },
+          "repeat": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11
+          },
+          "arms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "B0",
+                "H",
+                "EM",
+                "ET"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "uniqueItems": true
+          }
+        }
+      },
+      "R08Job": {
+        "type": "object",
+        "required": [
+          "id",
+          "series",
+          "status",
+          "episodes",
+          "plan_sha256",
+          "engine_sha256",
+          "replay_status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "series": {
+            "const": "DEV-R08"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "complete",
+              "cancelled",
+              "failed",
+              "interrupted"
+            ]
+          },
+          "request": {
+            "$ref": "#/components/schemas/R08Request"
+          },
+          "episodes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "plan_sha256": {
+            "type": "string"
+          },
+          "engine_sha256": {
+            "type": "string"
+          },
+          "replay_status": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

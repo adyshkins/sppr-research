@@ -1,0 +1,14 @@
+{
+  "scope": "new DEV-R08 jobs compared against supplied archive hashes; not F10/E11",
+  "repeat": 0,
+  "profiles": [
+    {
+      "profile": "normal",
+      "job_id": "cce37d9e1528b24cd2f4467b14c8ebd7"
+    }
+  ],
+  "episodes": 4,
+  "files": 20,
+  "replay_records": 240,
+  "passed": true
+}

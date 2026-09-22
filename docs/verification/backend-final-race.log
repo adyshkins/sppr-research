@@ -1,0 +1,4 @@
+?   	sppr-prototype/research/cmd/research-api	[no test files]
+ok  	sppr-prototype/research/internal/httpapi	1.736s
+ok  	sppr-prototype/research/internal/r08	4.283s
+ok  	sppr-prototype/research/internal/research	(cached)

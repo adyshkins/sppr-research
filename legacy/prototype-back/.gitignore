@@ -1,0 +1,15 @@
+.idea/
+.vscode/
+
+# Go
+bin/
+*.test
+coverage.out
+backend/api
+
+# Env
+.env
+
+# OS
+.DS_Store
+Thumbs.db

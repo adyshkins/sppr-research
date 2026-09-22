@@ -1,0 +1,35 @@
+{
+  "version": "0.8",
+  "date": "2026-09-15",
+  "edition": "full-current-code-and-DEV-R08",
+  "source_basis": "v0.6 original code + E reimplementation from saved v0.7 reports; no full v0.7 source archive was available",
+  "notice": "NEW synthetic development experiment, not recovery of lost original runs or real industrial testing. Exceptional recovery actions remain above the fixed predicted risk limit.",
+  "includes": [
+    "current source, tests and fixtures",
+    "trained diagnostic model and fit_v04 training/validation evidence",
+    "saved v0.7 reports as E sources",
+    "DEV-R08 plan, freeze, declared patch, summaries, analysis, original check logs",
+    "portable reproduction launcher"
+  ],
+  "primary_dev_r08_episode_logs_included": true,
+  "reference_raw_loss_arrays_included": true,
+  "omits": [
+    "large old v0.6/v0.7 primary experiments",
+    "duplicate regeneration trajectories (comparison hashes retained)",
+    "compiled binaries",
+    "Python caches",
+    "runtime process ID files"
+  ],
+  "experimental_units": {
+    "profiles": 5,
+    "paired_repeats": 12,
+    "arms": 4,
+    "episodes": 240,
+    "physical_days": 14400
+  },
+  "tests": {
+    "top_level": 357,
+    "nested": 14
+  },
+  "see": "docs/24_verification_v0_8.md"
+}

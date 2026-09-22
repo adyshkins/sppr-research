@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: sppr-postgres
+    environment:
+      POSTGRES_DB: sppr_db
+      POSTGRES_USER: sppr_user
+      POSTGRES_PASSWORD: sppr_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sppr_user -d sppr_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: sppr-backend
+    environment:
+      APP_ENV: development
+      HTTP_PORT: 8080
+      DATABASE_URL: postgres://sppr_user:sppr_password@postgres:5432/sppr_db?sslmode=disable
+      FRONTEND_ORIGIN: http://localhost:5173
+    ports:
+      - "${BACKEND_HOST_PORT:-18080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

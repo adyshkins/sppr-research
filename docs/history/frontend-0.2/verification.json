@@ -1,0 +1,30 @@
+{
+  "go_tests_passed_including_subtests": 58,
+  "top_level_tests": 15,
+  "subtests": 43,
+  "race_detector": "pass",
+  "go_vet": "pass",
+  "linux_build": "pass",
+  "windows_cross_compile": "pass_not_executed",
+  "typescript_typecheck": "pass",
+  "vite_production_build": "blocked_missing_linux_rollup_and_no_network",
+  "legacy_backend_content": "unchanged",
+  "legacy_frontend": "preserved_except_export_name",
+  "github_published": false,
+  "scientific_engine_connected": false,
+  "F10_E11_reproduced": false,
+  "ui_checks": {
+    "checks": [
+      "overview_connected_engine_run_disabled",
+      "valid_test_profile_not_mislabelled_as_reference",
+      "empty_store_no_mock_results",
+      "import_full_test_bundle_with_visible_test_label",
+      "paired_analysis_zero_contrasts",
+      "import_persists_after_reload",
+      "mobile_no_document_horizontal_overflow"
+    ],
+    "page_errors": [],
+    "preview_type": "in-memory CommonJS QA bundle and HTTP bridge to local API; managed browser disallowed localhost navigation; NOT a Vite production build or a real browser CORS test",
+    "browser": "Chromium 144"
+  }
+}

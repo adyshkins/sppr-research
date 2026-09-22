@@ -1,0 +1,17 @@
+/bin/
+/data/
+/frontend/node_modules/
+/frontend/dist/
+**/__pycache__/
+*.pyc
+*.exe
+.env
+.env.local
+!.env.example
+/engine/rerun*/
+/engine/replay_check*/
+/engine/regeneration_check*/
+/backend/research-api
+/backend/data/
+.DS_Store
+/r08-check.json

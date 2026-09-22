@@ -1,0 +1,185 @@
+{
+  "version": "bernoulli-fit-v04",
+  "graph_version": "declared-graph-04",
+  "provenance": {
+    "kind": "training_fit",
+    "description": "NEW synthetic active-day observed Bernoulli frequencies, Laplace smoothing; priors and graph remain declared; no company data, no recovered old model",
+    "dataset_id": "new-synthetic-training-v04",
+    "dataset_sha256": "f4c0686e991cda29e4bda3e6fe73afadeb3fb65ff3e734516b5c5bacfe946924",
+    "training_count": 813,
+    "laplace": 1
+  },
+  "hypotheses": [
+    {
+      "id": "D",
+      "causes": [
+        "D"
+      ],
+      "prior": 0.25,
+      "probability_feature_present": [
+        0.9959183673469387,
+        0.012244897959183673,
+        0.004081632653061225
+      ],
+      "kpi_link_strength": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "kpi_direction": [
+        -1,
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "id": "S",
+      "causes": [
+        "S"
+      ],
+      "prior": 0.25,
+      "probability_feature_present": [
+        0.009900990099009901,
+        0.995049504950495,
+        0.009900990099009901
+      ],
+      "kpi_link_strength": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "kpi_direction": [
+        -1,
+        -1,
+        -1,
+        -1
+      ]
+    },
+    {
+      "id": "C",
+      "causes": [
+        "C"
+      ],
+      "prior": 0.25,
+      "probability_feature_present": [
+        0.007751937984496124,
+        0.015503875968992248,
+        0.9922480620155039
+      ],
+      "kpi_link_strength": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "kpi_direction": [
+        -1,
+        -1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "DS",
+      "causes": [
+        "D",
+        "S"
+      ],
+      "prior": 0.25,
+      "probability_feature_present": [
+        0.9959183673469387,
+        0.9959183673469387,
+        0.004081632653061225
+      ],
+      "kpi_link_strength": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "kpi_direction": [
+        -1,
+        -1,
+        -1,
+        -1
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "D",
+      "to": "K0"
+    },
+    {
+      "from": "D",
+      "to": "K3"
+    },
+    {
+      "from": "S",
+      "to": "K0"
+    },
+    {
+      "from": "S",
+      "to": "K1"
+    },
+    {
+      "from": "S",
+      "to": "K2"
+    },
+    {
+      "from": "S",
+      "to": "K3"
+    },
+    {
+      "from": "C",
+      "to": "K0"
+    },
+    {
+      "from": "C",
+      "to": "K1"
+    },
+    {
+      "from": "C",
+      "to": "K2"
+    },
+    {
+      "from": "C",
+      "to": "K3"
+    }
+  ],
+  "centrality": "outdegree",
+  "base_demand": [
+    40,
+    25
+  ],
+  "base_raw": 90,
+  "base_capacity": 100,
+  "feature_ratios": [
+    1.1,
+    0.85,
+    0.85
+  ],
+  "kpi_threshold": [
+    0.05,
+    0.05,
+    0.1,
+    2
+  ],
+  "kpi_weights": [
+    0.35,
+    0.25,
+    0.15,
+    0.25
+  ],
+  "score_weights": [
+    0.65,
+    0.25,
+    0.1
+  ],
+  "relevance_threshold": 0.15,
+  "minimum_confidence": 0.25,
+  "epsilon": 1e-12
+}

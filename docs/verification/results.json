@@ -1,0 +1,282 @@
+{
+  "engine": {
+    "top_level_tests": 357,
+    "subtests": 14,
+    "failures": 0
+  },
+  "backend": {
+    "top_level_tests": 25,
+    "subtests": 51,
+    "failures": 0
+  },
+  "engine-race": {
+    "exit_code": 0
+  },
+  "engine-vet": {
+    "exit_code": 0
+  },
+  "backend-final-race": {
+    "exit_code": 0
+  },
+  "backend-final-vet": {
+    "exit_code": 0
+  },
+  "backend-final-build": {
+    "exit_code": 0
+  },
+  "backend-final-windows": {
+    "exit_code": 0
+  },
+  "engine-windows-build": {
+    "exit_code": 0
+  },
+  "publisher-tests": {
+    "exit_code": 0
+  },
+  "integration": {
+    "scope": "fresh R08 API runs and original archive byte comparison; not F10/E11",
+    "profiles": [
+      {
+        "profile": "normal",
+        "repeat": 0,
+        "episodes": 4,
+        "id": "d63bb4fe17da2ebd6e82bb270cbaa367",
+        "duration_seconds": 0.659,
+        "replay_records": 240,
+        "metrics": [
+          {
+            "arm": "B0",
+            "plan_index": 0,
+            "loss": 0
+          },
+          {
+            "arm": "H",
+            "plan_index": 1,
+            "loss": 0
+          },
+          {
+            "arm": "EM",
+            "plan_index": 2,
+            "loss": 0
+          },
+          {
+            "arm": "ET",
+            "plan_index": 3,
+            "loss": 0
+          }
+        ]
+      },
+      {
+        "profile": "S",
+        "repeat": 0,
+        "episodes": 4,
+        "id": "e545670dd9655b6a9893958309d73870",
+        "duration_seconds": 16.881,
+        "replay_records": 240,
+        "metrics": [
+          {
+            "arm": "B0",
+            "plan_index": 48,
+            "loss": 0.39512261486918887
+          },
+          {
+            "arm": "H",
+            "plan_index": 49,
+            "loss": 0.6438451532861538
+          },
+          {
+            "arm": "EM",
+            "plan_index": 50,
+            "loss": 0.4427512306681789
+          },
+          {
+            "arm": "ET",
+            "plan_index": 51,
+            "loss": 0.4427512306681789
+          }
+        ]
+      },
+      {
+        "profile": "C",
+        "repeat": 0,
+        "episodes": 4,
+        "id": "ce76900d214616b064fa573a70c3fe18",
+        "duration_seconds": 17.916,
+        "replay_records": 240,
+        "metrics": [
+          {
+            "arm": "B0",
+            "plan_index": 96,
+            "loss": 1.106007936698332
+          },
+          {
+            "arm": "H",
+            "plan_index": 97,
+            "loss": 1.3066246290514736
+          },
+          {
+            "arm": "EM",
+            "plan_index": 98,
+            "loss": 1.076007936698332
+          },
+          {
+            "arm": "ET",
+            "plan_index": 99,
+            "loss": 1.2342180261566968
+          }
+        ]
+      },
+      {
+        "profile": "D",
+        "repeat": 0,
+        "episodes": 4,
+        "id": "32b502c16d228e801fd2bfd033d1c99e",
+        "duration_seconds": 18.858,
+        "replay_records": 240,
+        "metrics": [
+          {
+            "arm": "B0",
+            "plan_index": 144,
+            "loss": 0.7233582162651615
+          },
+          {
+            "arm": "H",
+            "plan_index": 145,
+            "loss": 0.7049994406063244
+          },
+          {
+            "arm": "EM",
+            "plan_index": 146,
+            "loss": 0.7049994406063244
+          },
+          {
+            "arm": "ET",
+            "plan_index": 147,
+            "loss": 0.7049994406063244
+          }
+        ]
+      },
+      {
+        "profile": "DS",
+        "repeat": 0,
+        "episodes": 4,
+        "id": "a67b3c7cb01b1cf67a68c536e74037f7",
+        "duration_seconds": 18.804,
+        "replay_records": 240,
+        "metrics": [
+          {
+            "arm": "B0",
+            "plan_index": 192,
+            "loss": 0.7607978793025838
+          },
+          {
+            "arm": "H",
+            "plan_index": 193,
+            "loss": 1.8337345871420225
+          },
+          {
+            "arm": "EM",
+            "plan_index": 194,
+            "loss": 0.8153038869857429
+          },
+          {
+            "arm": "ET",
+            "plan_index": 195,
+            "loss": 1.3783265394260809
+          }
+        ]
+      }
+    ],
+    "file_comparisons": 100,
+    "replay_records": 1200,
+    "passed": true,
+    "health": {
+      "engine_ready": false,
+      "r08_ready": true,
+      "service": "sppr-research",
+      "status": "ok",
+      "version": "0.3.0-dev"
+    },
+    "negative_http_checks": 6
+  },
+  "api-final-checks": {
+    "scope": "final API binary after required-field validation, persisted R08 jobs recovered after restart",
+    "restored_jobs": 5,
+    "restored_episodes": 20,
+    "negative_http_checks": [
+      {
+        "request": "{\"profile\":\"S\",\"arms\":[\"H\"]}",
+        "status": 422
+      },
+      {
+        "request": "{\"profile\":\"S\",\"repeat\":null,\"arms\":[\"H\"]}",
+        "status": 422
+      },
+      {
+        "request": "{\"profile\":\"S\",\"repeat\":0,\"repeat\":1,\"arms\":[\"H\"]}",
+        "status": 422
+      },
+      {
+        "request": "[]",
+        "status": 422
+      },
+      {
+        "request": "null",
+        "status": 422
+      },
+      {
+        "request": "replay null",
+        "status": 422
+      },
+      {
+        "request": "cancel null",
+        "status": 422
+      }
+    ],
+    "passed": true
+  },
+  "browser": {
+    "build": "offline render of independent harness using captured API responses; no browser network requests; NOT Vite production",
+    "passed": true,
+    "checks": [
+      "capability reflects connected R08 engine",
+      "F10/E11 execution remains explicitly disabled",
+      "computed S results and four verified replay counters displayed",
+      "four primary-file download groups visible",
+      "mobile page width does not overflow; tables scroll inside their container",
+      "E11 profile tab remains available",
+      "imported series storage is separate and empty; no article values fabricated",
+      "no browser JavaScript exceptions"
+    ]
+  },
+  "check-tool-smoke": {
+    "scope": "new DEV-R08 jobs compared against supplied archive hashes; not F10/E11",
+    "repeat": 0,
+    "profiles": [
+      {
+        "profile": "normal",
+        "job_id": "cce37d9e1528b24cd2f4467b14c8ebd7"
+      }
+    ],
+    "episodes": 4,
+    "files": 20,
+    "replay_records": 240,
+    "passed": true
+  },
+  "scope": {
+    "version": "0.3.0-dev",
+    "engine": "0.8 DEV-R08",
+    "source_code_unchanged": true,
+    "f10_e11_reproduction": false,
+    "production_vite_build_verified": false,
+    "windows_runtime_verified": false,
+    "github_published": false,
+    "github_renamed": false
+  },
+  "environment": {
+    "os": "Linux x86_64",
+    "go": "1.23.2",
+    "node": "22.16.0",
+    "python": "3.13.5"
+  }
+}

@@ -1,0 +1,36 @@
+ok  	dissertation.local/sppr-reconstruction/analysispipe	1.044s
+ok  	dissertation.local/sppr-reconstruction/casetrace	1.399s
+ok  	dissertation.local/sppr-reconstruction/closedrun	2.093s
+ok  	dissertation.local/sppr-reconstruction/cmd/casecheck	1.340s
+ok  	dissertation.local/sppr-reconstruction/cmd/corecheck	1.013s
+?   	dissertation.local/sppr-reconstruction/cmd/recoverycheck	[no test files]
+ok  	dissertation.local/sppr-reconstruction/cmd/factorcheck	1.032s
+ok  	dissertation.local/sppr-reconstruction/cmd/forecastcheck	1.012s
+ok  	dissertation.local/sppr-reconstruction/cmd/loopcheck	1.015s
+ok  	dissertation.local/sppr-reconstruction/cmd/monitorcheck	1.274s
+ok  	dissertation.local/sppr-reconstruction/cmd/traincheck	1.014s
+ok  	dissertation.local/sppr-reconstruction/control	1.075s
+?   	dissertation.local/sppr-reconstruction/internal/testfixture	[no test files]
+ok  	dissertation.local/sppr-reconstruction/controltrace	3.878s
+ok  	dissertation.local/sppr-reconstruction/core	1.018s
+ok  	dissertation.local/sppr-reconstruction/diagnostics	1.020s
+ok  	dissertation.local/sppr-reconstruction/evidenceinit	1.175s
+ok  	dissertation.local/sppr-reconstruction/execution	1.034s
+ok  	dissertation.local/sppr-reconstruction/factorial	35.889s
+ok  	dissertation.local/sppr-reconstruction/forecast	1.103s
+ok  	dissertation.local/sppr-reconstruction/forecastpipe	1.044s
+ok  	dissertation.local/sppr-reconstruction/forecasttrace	2.055s
+ok  	dissertation.local/sppr-reconstruction/monitor	1.018s
+ok  	dissertation.local/sppr-reconstruction/monitortrace	1.090s
+ok  	dissertation.local/sppr-reconstruction/observation	1.013s
+ok  	dissertation.local/sppr-reconstruction/plant	1.020s
+ok  	dissertation.local/sppr-reconstruction/protocol	1.053s
+ok  	dissertation.local/sppr-reconstruction/randomstream	1.020s
+ok  	dissertation.local/sppr-reconstruction/recovery	1.020s
+ok  	dissertation.local/sppr-reconstruction/recoverycontrol	1.055s
+ok  	dissertation.local/sppr-reconstruction/recoveryrun	4.318s
+ok  	dissertation.local/sppr-reconstruction/sensor	1.023s
+ok  	dissertation.local/sppr-reconstruction/settings	1.009s
+ok  	dissertation.local/sppr-reconstruction/simenv	1.089s
+ok  	dissertation.local/sppr-reconstruction/sufficiency	1.063s
+ok  	dissertation.local/sppr-reconstruction/training	1.399s

@@ -1,0 +1,2453 @@
+{
+  "evidence_class": "synthetic_analysis_fixture_not_effectiveness_experiment",
+  "start_day": 0,
+  "config": {
+    "mode": "aggregate_only_v0_2",
+    "monitor": {
+      "quality": {
+        "weights_completeness_freshness_consistency": [
+          0.4,
+          0.3,
+          0.3
+        ],
+        "minimum": 0.7,
+        "cross_tolerance": 0.2,
+        "base_capacity": 100,
+        "capacity_per_unit": [
+          1,
+          1.6
+        ],
+        "raw_days_denominator": 90
+      },
+      "targets": [
+        1,
+        1,
+        0.8,
+        5
+      ],
+      "threshold": [
+        0.05,
+        0.05,
+        0.1,
+        2
+      ],
+      "ewma_weight": 0.2,
+      "ewma_limit": [
+        0.04,
+        0.04,
+        0.08,
+        1.6
+      ],
+      "cusum_slack": [
+        0.025,
+        0.025,
+        0.05,
+        1
+      ],
+      "cusum_limit": [
+        0.15,
+        0.15,
+        0.3,
+        6
+      ],
+      "criticality_weights": [
+        0.35,
+        0.25,
+        0.15,
+        0.25
+      ],
+      "initial_values": {
+        "backlog_after_a": 0,
+        "backlog_after_b": 0,
+        "backlog_before_a": 0,
+        "backlog_before_b": 0,
+        "capacity_before_overtime": 100,
+        "demand_a": 40,
+        "demand_b": 25,
+        "finished_end_a": 20,
+        "finished_end_b": 12.5,
+        "output_a": 40,
+        "output_b": 25,
+        "raw_end": 450,
+        "regular_raw_arrival": 90,
+        "shipped_a": 40,
+        "shipped_b": 25
+      }
+    },
+    "admission": {
+      "policy": "fresh_required",
+      "raw_stock_max_age": 0
+    },
+    "diagnosis": {
+      "version": "synthetic-parameter-fixture-03",
+      "graph_version": "synthetic-graph-fixture-03",
+      "provenance": {
+        "kind": "synthetic_fixture",
+        "description": "Hand-set Bernoulli probabilities 0.9/0.1 and example graph, ONLY for software verification; not learned or validated on a company",
+        "dataset_id": "",
+        "dataset_sha256": "",
+        "training_count": 0,
+        "laplace": 0
+      },
+      "hypotheses": [
+        {
+          "id": "D",
+          "causes": [
+            "D"
+          ],
+          "prior": 0.25,
+          "probability_feature_present": [
+            0.9,
+            0.1,
+            0.1
+          ],
+          "kpi_link_strength": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "kpi_direction": [
+            -1,
+            0,
+            0,
+            -1
+          ]
+        },
+        {
+          "id": "S",
+          "causes": [
+            "S"
+          ],
+          "prior": 0.25,
+          "probability_feature_present": [
+            0.1,
+            0.9,
+            0.1
+          ],
+          "kpi_link_strength": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "kpi_direction": [
+            -1,
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "id": "C",
+          "causes": [
+            "C"
+          ],
+          "prior": 0.25,
+          "probability_feature_present": [
+            0.1,
+            0.1,
+            0.9
+          ],
+          "kpi_link_strength": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "kpi_direction": [
+            -1,
+            -1,
+            1,
+            1
+          ]
+        },
+        {
+          "id": "DS",
+          "causes": [
+            "D",
+            "S"
+          ],
+          "prior": 0.25,
+          "probability_feature_present": [
+            0.9,
+            0.9,
+            0.1
+          ],
+          "kpi_link_strength": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "kpi_direction": [
+            -1,
+            -1,
+            -1,
+            -1
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "D",
+          "to": "K0"
+        },
+        {
+          "from": "D",
+          "to": "K3"
+        },
+        {
+          "from": "S",
+          "to": "K0"
+        },
+        {
+          "from": "S",
+          "to": "K1"
+        },
+        {
+          "from": "S",
+          "to": "K2"
+        },
+        {
+          "from": "S",
+          "to": "K3"
+        },
+        {
+          "from": "C",
+          "to": "K0"
+        },
+        {
+          "from": "C",
+          "to": "K1"
+        },
+        {
+          "from": "C",
+          "to": "K2"
+        },
+        {
+          "from": "C",
+          "to": "K3"
+        }
+      ],
+      "centrality": "outdegree",
+      "base_demand": [
+        40,
+        25
+      ],
+      "base_raw": 90,
+      "base_capacity": 100,
+      "feature_ratios": [
+        1.1,
+        0.85,
+        0.85
+      ],
+      "kpi_threshold": [
+        0.05,
+        0.05,
+        0.1,
+        2
+      ],
+      "kpi_weights": [
+        0.35,
+        0.25,
+        0.15,
+        0.25
+      ],
+      "score_weights": [
+        0.65,
+        0.25,
+        0.1
+      ],
+      "relevance_threshold": 0.15,
+      "minimum_confidence": 0.25,
+      "epsilon": 1e-12
+    }
+  },
+  "packets": [
+    {
+      "schema": "sppr.observation.v2",
+      "day": 0,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 1,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 2,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 1
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 1
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 1
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 1
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 1
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 1
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 1
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 1
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 1
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 1
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 1
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 1
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 1
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 1
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 1
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 3,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 4,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 5,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 6,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 7,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 1000,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 8,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 60,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 35,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 9,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 60,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 35,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 10,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 11,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 12,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 75,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 700,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 13,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 60,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 35,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 14,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 15,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 40,
+          "age_days": 1
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 16,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 17,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 18,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": false,
+          "value": null,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 19,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 20,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": -1,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 21,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 22,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    },
+    {
+      "schema": "sppr.observation.v2",
+      "day": 23,
+      "context": {
+        "executed_plan": [
+          40,
+          25
+        ],
+        "executed_overtime": 0,
+        "executed_action_id": "u0",
+        "plan_version": "test-plan",
+        "constraint_version": "test-constraints"
+      },
+      "readings": {
+        "backlog_after_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_after_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_a": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "backlog_before_b": {
+          "present": true,
+          "value": 0,
+          "age_days": 0
+        },
+        "capacity_before_overtime": {
+          "present": true,
+          "value": 100,
+          "age_days": 0
+        },
+        "demand_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "demand_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "finished_end_a": {
+          "present": true,
+          "value": 20,
+          "age_days": 0
+        },
+        "finished_end_b": {
+          "present": true,
+          "value": 12.5,
+          "age_days": 0
+        },
+        "output_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "output_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        },
+        "raw_end": {
+          "present": true,
+          "value": 450,
+          "age_days": 0
+        },
+        "regular_raw_arrival": {
+          "present": true,
+          "value": 90,
+          "age_days": 0
+        },
+        "shipped_a": {
+          "present": true,
+          "value": 40,
+          "age_days": 0
+        },
+        "shipped_b": {
+          "present": true,
+          "value": 25,
+          "age_days": 0
+        }
+      }
+    }
+  ]
+}
