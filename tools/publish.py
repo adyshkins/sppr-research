@@ -1,154 +1,144 @@
 #!/usr/bin/env python3
-"""Publish this verified source bundle under the repository owner's identity.
+"""Push existing main commits to sppr-research without replacing its history.
 
-Dry check: python tools/publish.py
-Publish and rename: python tools/publish.py --apply --rename sppr-research
-The token is read from a hidden prompt (or GH_TOKEN); it is never saved.
-No force push, deletion of old history or deletion of the frontend repo.
+Read-only remote check: python tools/publish.py
+Publish committed work: python tools/publish.py --apply
+Git handles authentication. This script never asks for an access token, creates
+commits, changes repository names, or uses force push.
 """
 from __future__ import annotations
+
 import argparse
-import getpass
-import hashlib
-import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import sys
-import time
-import urllib.error
-import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
-OWNER = 'adyshkins'
-REPO_ID = 1243562059
-EXPECTED_HEAD = '897857750855167be9690bad89a375ba4d821fec'
-AUTHOR = {'name': 'Адышкин Сергей Сергеевич', 'email': 'adyshkinss@gmail.com'}
-API = 'https://api.github.com'
+TARGETS = frozenset({
+    'https://github.com/adyshkins/sppr-research.git',
+    'git@github.com:adyshkins/sppr-research.git',
+    'ssh://git@github.com/adyshkins/sppr-research.git',
+})
+AUTHOR_NAMES = frozenset({'AdSS', 'adyshkins', 'Адышкин Сергей Сергеевич'})
+AUTHOR_EMAILS = frozenset({
+    'adyshkinss@gmail.com',
+    '56836526+adyshkins@users.noreply.github.com',
+    'adyshkins@users.noreply.github.com',
+})
 SECRET = re.compile(rb'(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|-----BEGIN (?:RSA |OPENSSH |EC )?PRIVATE KEY-----)')
 
-def source_files() -> list[dict]:
-    manifest = json.loads((ROOT / 'release-files.json').read_text(encoding='utf-8'))
-    files = []
-    for name, expected in manifest['files'].items():
-        rel = Path(name)
-        if rel.is_absolute() or '..' in rel.parts:
-            raise RuntimeError('Unsafe release manifest path')
-        p = ROOT / rel
-        if p.is_symlink() or not p.is_file():
-            raise RuntimeError(f'Missing or non-regular file: {name}')
-        data = p.read_bytes()
-        if hashlib.sha256(data).hexdigest() != expected:
-            raise RuntimeError(f'Release file changed: {name}')
-        if SECRET.search(data):
-            raise RuntimeError(f'Potential credential detected in {name}; nothing will be published')
-        files.append({'path': name, 'mode': '100644', 'type': 'blob', 'content': data.decode('utf-8')})
-    # This manifest is a release descriptor, not a self-referential hash claim.
-    files.append({'path': 'release-files.json', 'mode': '100644', 'type': 'blob',
-                  'content': (ROOT / 'release-files.json').read_text(encoding='utf-8')})
-    return files
 
-class Client:
-    def __init__(self, token: str):
-        self.token = token
-    def call(self, method: str, path: str, payload: dict | None = None) -> dict:
-        if not path.startswith('/') or path.startswith('//'):
-            raise RuntimeError('Invalid GitHub API path')
-        data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode('utf-8')
-        request = urllib.request.Request(API + path, data=data, method=method, headers={
-            'Authorization': 'Bearer ' + self.token, 'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'sppr-research-publisher',
-            'Content-Type': 'application/json',
-        })
-        try:
-            with urllib.request.urlopen(request, timeout=120) as response:
-                return json.load(response)
-        except urllib.error.HTTPError as e:
-            # Never include the request or headers in an error message.
-            try:
-                message = json.loads(e.read()).get('message', 'GitHub request failed')
-            except (ValueError, UnicodeError):
-                message = 'GitHub request failed'
-            raise RuntimeError(f'{method} {path}: HTTP {e.code}: {message}') from None
-        except urllib.error.URLError as e:
-            raise RuntimeError('GitHub is unreachable; no automatic retry of writes. Check the repository before retrying.') from None
+def git(root: Path, *args: str) -> bytes:
+    """Run without a shell, with normal Git credential helpers and hooks."""
+    env = os.environ.copy()
+    for key in ('GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR'):
+        env.pop(key, None)
+    try:
+        result = subprocess.run(['git', *args], cwd=root, env=env,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                timeout=180, check=False)
+    except FileNotFoundError:
+        raise RuntimeError('Git is not installed or is not on PATH') from None
+    except subprocess.TimeoutExpired:
+        raise RuntimeError('Git timed out. Check the remote state before retrying.') from None
+    if result.returncode:
+        # Do not expose URLs, credentials or private paths from Git stderr.
+        raise RuntimeError(f'Git {args[0]} failed (exit {result.returncode}). '
+                           'No force retry was attempted; inspect Git locally.')
+    return result.stdout
+
+
+def text(root: Path, *args: str) -> str:
+    return git(root, *args).decode('utf-8').strip()
+
+
+def check_target(root: Path, allowed: frozenset[str]) -> None:
+    for args in (('remote', 'get-url', '--all', 'origin'),
+                 ('remote', 'get-url', '--push', '--all', 'origin')):
+        urls = text(root, *args).splitlines()
+        if len(urls) != 1 or urls[0] not in allowed:
+            raise RuntimeError('origin must point only to adyshkins/sppr-research; '
+                               'no remote changes were made.')
+
+
+def check_outgoing(root: Path, base: str, head: str) -> int:
+    """Check every unpublished commit, including files later removed again."""
+    commits = text(root, 'rev-list', base + '..' + head).splitlines()
+    checked_blobs: set[str] = set()
+    for commit in commits:
+        fields = text(root, 'show', '-s', '--format=%an%x00%ae%x00%cn%x00%ce%x00%B',
+                      commit).split('\0', 4)
+        if (len(fields) != 5 or fields[0] not in AUTHOR_NAMES
+                or fields[2] not in AUTHOR_NAMES or fields[1] not in AUTHOR_EMAILS
+                or fields[3] not in AUTHOR_EMAILS):
+            raise RuntimeError('Outgoing author/committer is not an approved owner identity.')
+        if re.search(r'(?im)^\s*co-authored-by\s*:', fields[4]):
+            raise RuntimeError('Review additional co-author trailers before publication.')
+        if SECRET.search(fields[4].encode('utf-8')):
+            raise RuntimeError('Potential credential in an outgoing commit message.')
+        # Inspect complete outgoing snapshots, not only the final diff. The
+        # pattern check is deliberately limited; it is not a full secret audit.
+        for entry in git(root, 'ls-tree', '-r', '-z', '--full-tree', commit).split(b'\0'):
+            if not entry:
+                continue
+            metadata, _ = entry.split(b'\t', 1)
+            mode, kind, oid = metadata.decode('ascii').split()
+            if kind != 'blob' or mode not in ('100644', '100755'):
+                raise RuntimeError('Review non-regular files or submodules before publication.')
+            if oid not in checked_blobs:
+                if SECRET.search(git(root, 'cat-file', 'blob', oid)):
+                    raise RuntimeError('Potential credential in an outgoing file snapshot.')
+                checked_blobs.add(oid)
+    return len(commits)
+
+
+def publish(root: Path, apply: bool, *, allowed: frozenset[str] = TARGETS) -> dict:
+    """Update an existing main. `allowed` is injectable for offline unit tests."""
+    root = root.resolve()
+    if Path(text(root, 'rev-parse', '--show-toplevel')).resolve() != root:
+        raise RuntimeError('Run from the project clone, not a nested Git repository.')
+    if text(root, 'symbolic-ref', '--quiet', '--short', 'HEAD') != 'main':
+        raise RuntimeError('Only the local main branch can be published by this helper.')
+    if text(root, 'status', '--porcelain', '--untracked-files=normal'):
+        raise RuntimeError('Commit or move local changes before publishing; the worktree is not clean.')
+    check_target(root, allowed)
+    head = text(root, 'rev-parse', 'HEAD')
+    # Fetch changes local metadata only. Dry run never modifies the remote.
+    git(root, 'fetch', '--no-tags', 'origin', 'refs/heads/main')
+    base = text(root, 'rev-parse', 'FETCH_HEAD')
+    if base == head:
+        return {'status': 'up-to-date', 'commit': head, 'commits': 0}
+    git(root, 'merge-base', '--is-ancestor', base, head)
+    count = check_outgoing(root, base, head)
+    if not apply:
+        return {'status': 'dry-run', 'commit': head, 'commits': count}
+    # Recheck local state and destination; a concurrent remote advance is also
+    # protected by normal Git non-fast-forward rejection at the push itself.
+    check_target(root, allowed)
+    if text(root, 'rev-parse', 'HEAD') != head or text(root, 'status', '--porcelain'):
+        raise RuntimeError('Local state changed during verification. Nothing was pushed.')
+    git(root, 'push', '--no-follow-tags', 'origin', head + ':refs/heads/main')
+    refs = text(root, 'ls-remote', '--refs', 'origin', 'refs/heads/main').splitlines()
+    if len(refs) != 1 or refs[0].split('\t')[0] != head:
+        raise RuntimeError('Push was not confirmed by the remote. Check GitHub before retrying.')
+    return {'status': 'published', 'commit': head, 'commits': count}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--repo', default='adyshkins/sppr-prototype-back')
-    parser.add_argument('--apply', action='store_true', help='authorize writes; otherwise only inspect')
-    parser.add_argument('--rename', help='optional new repository name, e.g. sppr-research')
+    parser.add_argument('--apply', action='store_true', help='push verified, already committed changes')
     args = parser.parse_args()
-    if not re.fullmatch(r'adyshkins/[A-Za-z0-9_.-]+', args.repo):
-        parser.error('Only the explicitly authorized owner adyshkins is supported')
-    if args.rename and not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,99}', args.rename):
-        parser.error('Invalid repository name')
-    files = source_files()
-    print(f'Checked {len(files)} source files. Runtime data and node_modules are not included.')
-    token = os.environ.get('GH_TOKEN') or getpass.getpass('GitHub token (hidden; do not paste it in a chat): ')
-    if not token.strip():
-        raise RuntimeError('No token supplied')
-    client = Client(token.strip())
-    profile = client.call('GET', '/user')
-    if profile.get('login') != OWNER:
-        raise RuntimeError('Authenticated account must be adyshkins')
-    repo = client.call('GET', '/repos/' + args.repo)
-    if repo.get('id') != REPO_ID or repo.get('owner', {}).get('login') != OWNER:
-        raise RuntimeError('Repository ID/owner differs from the inspected repository; no writes')
-    name = repo['full_name']
-    branch = repo['default_branch']
-    if branch != 'main':
-        raise RuntimeError('Default branch changed; review before publishing')
-    base = '/repos/' + name
-    ref = client.call('GET', base + '/git/ref/heads/main')
-    head = ref['object']['sha']
-    if head != EXPECTED_HEAD:
-        raise RuntimeError('main changed since the verified baseline. Merge the new changes before publishing; no files were overwritten.')
-    print(f'Target: {name}, main={head}. New author and committer: {AUTHOR["name"]} <{AUTHOR["email"]}>')
-    if not args.apply:
-        print('Read-only check completed. No GitHub changes. Add --apply to publish; --rename is optional.')
-        return
-    backup = 'backup/pre-monorepo-' + head[:12]
-    # Resolve backup once. A missing ref is handled distinctly from permission errors.
-    try:
-        old = client.call('GET', base + '/git/ref/heads/' + backup)
-    except RuntimeError as e:
-        if 'HTTP 404:' not in str(e):
-            raise
-        old = client.call('POST', base + '/git/refs', {'ref': 'refs/heads/' + backup, 'sha': head})
-    if old['object']['sha'] != head:
-        raise RuntimeError('Backup branch points elsewhere; no main update')
-    tree = client.call('POST', base + '/git/trees', {'tree': files})
-    commit = client.call('POST', base + '/git/commits', {
-        'message': 'Unify research workbench and R08 engine', 'tree': tree['sha'], 'parents': [head],
-        'author': AUTHOR, 'committer': AUTHOR,
-    })
-    for role in ('author', 'committer'):
-        if any(commit.get(role, {}).get(k) != v for k, v in AUTHOR.items()):
-            raise RuntimeError('Commit identity mismatch; main has not been updated')
-    if client.call('GET', base + '/git/ref/heads/main')['object']['sha'] != head:
-        raise RuntimeError('main moved during preparation; the candidate commit was not published to main')
-    updated = client.call('PATCH', base + '/git/refs/heads/main', {'sha': commit['sha'], 'force': False})
-    if updated['object']['sha'] != commit['sha']:
-        raise RuntimeError('Unexpected ref response; check GitHub before doing anything else')
-    verified = client.call('GET', base + '/git/ref/heads/main')
-    if verified['object']['sha'] != commit['sha']:
-        raise RuntimeError('Could not verify the published head; check GitHub')
-    print('Published:', repo['html_url'] + '/commit/' + commit['sha'])
-    if args.rename and args.rename != repo['name']:
-        try:
-            changed = client.call('PATCH', base, {'name': args.rename})
-            if changed.get('id') != REPO_ID or changed.get('name') != args.rename:
-                raise RuntimeError('Unexpected rename response')
-            print('Renamed:', changed['html_url'])
-        except RuntimeError:
-            print('Code was published successfully, but rename was not confirmed. Rename the repository in GitHub Settings; do not repeat the source publication.', file=sys.stderr)
-            raise
-    print('Original history and backup branch retained. The frontend repository was not changed.')
+    result = publish(ROOT, args.apply)
+    print(f"{result['status']}: {result['commit']} ({result['commits']} outgoing commits)")
+    if result['status'] == 'dry-run':
+        print('Remote unchanged. Add --apply to send these existing commits.')
+
 
 if __name__ == '__main__':
     try:
         main()
-    except (OSError, ValueError, KeyError, RuntimeError) as e:
-        print('Publication stopped:', str(e), file=sys.stderr)
+    except (OSError, ValueError, RuntimeError) as error:
+        print('Publication stopped:', error, file=sys.stderr)
         raise SystemExit(1)

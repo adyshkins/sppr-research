@@ -3,12 +3,12 @@
   "version": "0.3.0-dev",
   "engine": "DEV-R08 0.8",
   "files": {
-    ".gitattributes": "734f59f2219fedc4d2bfd70cd1a427781e0a961bc2f20682587de14ecf0ba780",
+    ".gitattributes": "af3bc1614b0ae4f848105f7c947f09fad9829052b28e88f6e7d3eb477c57ab95",
     ".github/workflows/verify.yml": "378a492812a1066d9cfbff54e6f964ce00096be37ac25a44a9601ce2ee82f19a",
     ".gitignore": "2f736aef16ad7d26488182f78c32b9434f2b39fcddd012a78d9e16cd288c494c",
     "LICENSE": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685",
     "Makefile": "e45fff1683ff4eb8eea62fb67a5ad55fa1e0b6cd76e57f65877d51ae687ea447",
-    "README.md": "6d33669730d0c6c4df9e85adb2ecb55eb3ad0e26b567b3df4c23558bcd9d9825",
+    "README.md": "b8394999b2ecbfd537a0215d0aa6a6e9059da27dd74e0e4cce9a031ed7ddc16f",
     "backend/Makefile": "402e56b9590e77f6a472bdd1fa461152949569681ebe514ccdbd176182647f35",
     "backend/README.md": "c6ccae46026b75ffe2545590f5f61d6da2c7b4a310f6f06f6ee1c454759b187f",
     "backend/cmd/research-api/main.go": "bd7f7220af8ed5a2af357dedbbb6ca02eebc6162638c81c2af9af65da3a7b674",
@@ -29,7 +29,7 @@
     "docs/history/frontend-0.2/README.md": "e4223f1d9eb5288b46b4b630aec40453781533668d2b2ce94066731a57edc3a0",
     "docs/history/frontend-0.2/verification-report.md": "f3607fb24e4b4c60e1ce4f8256b03d7eac8c8fafd3c22f631bd99403557bcfc4",
     "docs/history/frontend-0.2/verification.json": "266720343b04748f06a7ac45fa113d0684e4bb6f2279fc7ee99890a20cfd9387",
-    "docs/publishing.md": "835c4b1fe365bca47151c11787a8896096f19b2541971a488407346a5262f479",
+    "docs/publishing.md": "7dd2c95d3e8881efc4e1b12fb7464523d05260ed7efdbe9d5766e5734bdb2039",
     "docs/research-status.md": "129d4e5becfa22792752c28a403cd253fc3b3dcb6f43e0ced7b63bd37a1b2abb",
     "docs/upstream-files.json": "c5c7c8005e7ae542a82f836f0fdd4a14413302be89fb824211a336e9710f2abe",
     "docs/verification/api-final-checks.json": "dff93d4900ee09a0e03218d7ea7004b0f7878987268059f1b401e04a5e653c8c",
@@ -309,9 +309,9 @@
     "legacy/prototype-back/frontend/README.md": "5df65b25f70d6e8ef91882d3847f369f721d7b539c7bba1f4b814e3f97e1b839",
     "start.ps1": "184a8102da76cc384808532fa576590a9c56ec55377df89a5332510d1c6f1931",
     "tools/check_r08_api.py": "a1f14b523553f7439d0b384e928eb4a52edcca591bb0885da56c189479205f03",
-    "tools/publish.py": "31fe5be692a2b69eaf1d376b2b344cb2c1445690b37b06bd1cc9bfb93a4ac7c4",
+    "tools/publish.py": "c11af1b049dfc5332dffa0060fe4ec9e9f09f92289e350121f529cd8a4d09d9b",
     "tools/run.py": "789f25041ae027d4ba5fd7fde0f793aea8d4b6f784f50c599b74887e7011a4c8",
-    "tools/test_publish.py": "6e3d01a8cc414d1bc9456c16676fb9f7e29a06c1e40aa1b0e8bab26f61c65ac2",
+    "tools/test_publish.py": "d633c3f1d56f0d5bfa58122c4c83ce4bddab817e20d7e05e650b901e815d7101",
     "tools/verify_sources.py": "b8e0288089063efe41cc3ff4adde7377632b5f1311087debb72132b853b62ac1"
   }
 }

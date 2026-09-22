@@ -1,70 +1,151 @@
-"""Offline tests for publication guards. No GitHub requests are made."""
-import contextlib
-import hashlib
-import io
+"""Offline publication tests with local bare repositories; no GitHub calls."""
 import json
+import hashlib
+import os
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
 import publish
 
-class FakeClient:
-    calls=[]
-    wrong_author=False
-    changed_head=False
-    def __init__(self,token): self.head=publish.EXPECTED_HEAD
-    def call(self,method,path,payload=None):
-        self.calls.append((method,path,payload))
-        if path=='/user':return {'login':'adyshkins'}
-        if path.endswith('/sppr-prototype-back') and method=='GET':return {'id':publish.REPO_ID,'owner':{'login':'adyshkins'},'full_name':'adyshkins/sppr-prototype-back','default_branch':'main','name':'sppr-prototype-back','html_url':'https://github.com/adyshkins/sppr-prototype-back'}
-        if path.endswith('/git/ref/heads/main'):
-            return {'object':{'sha':'changed' if self.changed_head else self.head}}
-        if '/git/ref/heads/backup/' in path:raise RuntimeError('GET backup: HTTP 404: Not Found')
-        if path.endswith('/git/refs') and method=='POST':return {'object':{'sha':publish.EXPECTED_HEAD}}
-        if path.endswith('/git/trees'):return {'sha':'tree'}
-        if path.endswith('/git/commits'):
-            identity=dict(publish.AUTHOR)
-            if self.wrong_author:identity['email']='different@example.test'
-            return {'sha':'newcommit','author':identity,'committer':dict(publish.AUTHOR)}
-        if path.endswith('/git/refs/heads/main') and method=='PATCH':
-            assert payload['force'] is False
-            self.head=payload['sha'];return {'object':{'sha':self.head}}
-        if path.endswith('/sppr-prototype-back') and method=='PATCH':return {'id':publish.REPO_ID,'name':payload['name'],'html_url':'https://github.com/adyshkins/'+payload['name']}
-        raise AssertionError((method,path))
 
 class PublisherTests(unittest.TestCase):
-    def setUp(self):FakeClient.calls=[];FakeClient.wrong_author=False;FakeClient.changed_head=False
-    def invoke(self,args):
-        with patch.object(publish,'Client',FakeClient),patch.object(publish,'source_files',return_value=[{'path':'README.md','mode':'100644','type':'blob','content':'test'}]),patch.object(publish.getpass,'getpass',return_value='offline-test'),patch.dict(publish.os.environ,{'GH_TOKEN':''}),patch('sys.argv',['publish.py']+args),contextlib.redirect_stdout(io.StringIO()):publish.main()
-    def test_dry_run_has_no_writes(self):
-        self.invoke([]);self.assertTrue(all(m=='GET' for m,_,_ in FakeClient.calls))
-    def test_explicit_author_and_fast_forward(self):
-        self.invoke(['--apply','--rename','sppr-research'])
-        commit=next(p for m,u,p in FakeClient.calls if u.endswith('/git/commits'))
-        self.assertEqual(commit['author'],publish.AUTHOR);self.assertEqual(commit['committer'],publish.AUTHOR)
-        self.assertEqual(commit['parents'],[publish.EXPECTED_HEAD])
-        self.assertTrue(any(m=='PATCH' and u.endswith('/git/refs/heads/main') and p['force'] is False for m,u,p in FakeClient.calls))
-    def test_identity_mismatch_never_moves_main(self):
-        FakeClient.wrong_author=True
-        with self.assertRaises(RuntimeError):self.invoke(['--apply'])
-        self.assertFalse(any(m=='PATCH' for m,_,_ in FakeClient.calls))
-    def test_changed_remote_never_writes(self):
-        FakeClient.changed_head=True
-        with self.assertRaises(RuntimeError):self.invoke(['--apply'])
-        self.assertTrue(all(m=='GET' for m,_,_ in FakeClient.calls))
-    def test_manifest_and_secret_guards(self):
-        with tempfile.TemporaryDirectory() as d:
-            root=Path(d);f=root/'a.txt';f.write_text('safe')
-            manifest=root/'release-files.json';manifest.write_text(json.dumps({'files':{'a.txt':hashlib.sha256(f.read_bytes()).hexdigest()}}))
-            with patch.object(publish,'ROOT',root):
-                self.assertEqual(len(publish.source_files()),2)
-                f.write_text('changed')
-                with self.assertRaises(RuntimeError):publish.source_files()
-                f.write_text('gh'+'p_'+'A'*36)
-                manifest.write_text(json.dumps({'files':{'a.txt':hashlib.sha256(f.read_bytes()).hexdigest()}}))
-                with self.assertRaises(RuntimeError):publish.source_files()
-                manifest.write_text(json.dumps({'files':{'../escape':'x'}}))
-                with self.assertRaises(RuntimeError):publish.source_files()
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='sppr-publish-test-')
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.repo = self.root / 'clone'
+        self.remote = self.root / 'remote.git'
+        self.env = os.environ.copy()
+        for key in list(self.env):
+            if key.startswith('GIT_'):
+                self.env.pop(key, None)
+        self.env.update({'GIT_CONFIG_NOSYSTEM': '1', 'GIT_CONFIG_GLOBAL': os.devnull})
+        self.env_patch = patch.dict(os.environ, self.env, clear=True)
+        self.env_patch.start()
+        self.addCleanup(self.env_patch.stop)
+        self.run_git(self.root, 'init', '--bare', '--initial-branch=main', str(self.remote))
+        self.run_git(self.root, 'init', '--initial-branch=main', str(self.repo))
+        self.run_git(self.repo, 'config', 'user.name', 'AdSS')
+        self.run_git(self.repo, 'config', 'user.email', 'adyshkinss@gmail.com')
+        self.run_git(self.repo, 'config', 'commit.gpgsign', 'false')
+        self.run_git(self.repo, 'remote', 'add', 'origin', str(self.remote))
+        self.commit('Initial', 'initial')
+        self.run_git(self.repo, 'push', 'origin', 'main')
+        self.base = self.head(self.remote)
+        self.commit('Update', 'updated')
+        self.tip = self.head(self.repo)
+        self.allowed = frozenset({str(self.remote)})
 
-if __name__=='__main__':unittest.main()
+    def run_git(self, cwd, *args):
+        p = subprocess.run(['git', *args], cwd=cwd, env=self.env, check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return p.stdout.decode('utf-8').strip()
+
+    def commit(self, message, content):
+        (self.repo / 'data.txt').write_text(content, encoding='utf-8')
+        self.run_git(self.repo, 'add', 'data.txt')
+        self.run_git(self.repo, 'commit', '-m', message)
+
+    def head(self, root):
+        return self.run_git(root, 'rev-parse', 'refs/heads/main')
+
+    def invoke(self, apply=False):
+        return publish.publish(self.repo, apply, allowed=self.allowed)
+
+    def test_dry_run_has_no_remote_writes(self):
+        self.assertEqual(self.invoke()['status'], 'dry-run')
+        self.assertEqual(self.head(self.remote), self.base)
+
+    def test_fast_forward_and_identity_are_preserved(self):
+        self.assertEqual(self.invoke(True)['status'], 'published')
+        self.assertEqual(self.head(self.remote), self.tip)
+        self.assertEqual(self.run_git(self.remote, 'rev-parse', 'main^'), self.base)
+        self.assertEqual(self.run_git(self.remote, 'show', '-s', '--format=%an:%cn', 'main'), 'AdSS:AdSS')
+
+    def test_repeated_push_is_noop(self):
+        self.invoke(True)
+        self.assertEqual(self.invoke(True)['status'], 'up-to-date')
+
+    def test_dirty_worktree_is_refused(self):
+        (self.repo / 'data.txt').write_text('uncommitted')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+        self.assertEqual(self.head(self.remote), self.base)
+
+    def test_untracked_file_is_refused(self):
+        (self.repo / 'extra.txt').write_text('untracked')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def test_wrong_branch_is_refused(self):
+        self.run_git(self.repo, 'switch', '-c', 'other')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def test_detached_head_is_refused(self):
+        self.run_git(self.repo, 'checkout', '--detach', 'HEAD')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def test_old_repository_target_is_refused_without_network(self):
+        self.run_git(self.repo, 'remote', 'set-url', 'origin',
+                     'https://github.com/adyshkins/sppr-prototype-back.git')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def test_other_push_url_is_refused(self):
+        self.run_git(self.repo, 'remote', 'set-url', '--push', 'origin', str(self.root / 'other.git'))
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def test_unapproved_identity_is_refused(self):
+        self.run_git(self.repo, 'config', 'user.email', 'other@example.test')
+        self.commit('Other identity', 'third')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+        self.assertEqual(self.head(self.remote), self.base)
+
+    def test_all_owner_names_are_allowed(self):
+        for index, name in enumerate(sorted(publish.AUTHOR_NAMES)):
+            self.run_git(self.repo, 'config', 'user.name', name)
+            self.commit('Owner change', str(index))
+        self.assertEqual(self.invoke(True)['status'], 'published')
+
+    def test_coauthor_trailer_is_refused(self):
+        self.commit('Update\n\nCo-authored-by: Other <other@example.test>', 'third')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def test_secret_in_intermediate_snapshot_is_refused(self):
+        self.commit('Intermediate', 'gh' + 'p_' + 'A' * 36)
+        self.commit('Remove intermediate value', 'safe again')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+        self.assertEqual(self.head(self.remote), self.base)
+
+    def test_secret_in_commit_message_is_refused(self):
+        self.commit('gh' + 'p_' + 'A' * 36, 'safe')
+        with self.assertRaises(RuntimeError): self.invoke(True)
+
+    def competitor(self):
+        other = self.root / 'competing'
+        self.run_git(self.root, 'clone', str(self.remote), str(other))
+        self.run_git(other, 'config', 'user.name', 'AdSS')
+        self.run_git(other, 'config', 'user.email', 'adyshkinss@gmail.com')
+        (other / 'other.txt').write_text('new remote work')
+        self.run_git(other, 'add', 'other.txt')
+        self.run_git(other, '-c', 'commit.gpgsign=false', 'commit', '-m', 'Concurrent update')
+        self.run_git(other, 'push', 'origin', 'main')
+        return self.head(other)
+
+    def test_diverged_remote_is_not_overwritten(self):
+        rival = self.competitor()
+        with self.assertRaises(RuntimeError): self.invoke(True)
+        self.assertEqual(self.head(self.remote), rival)
+
+    def test_concurrent_advance_at_push_is_not_overwritten(self):
+        real_git = publish.git
+        rival = []
+        def racing_git(root, *args):
+            if args[0] == 'push': rival.append(self.competitor())
+            return real_git(root, *args)
+        with patch.object(publish, 'git', racing_git):
+            with self.assertRaises(RuntimeError): self.invoke(True)
+        self.assertEqual(self.head(self.remote), rival[0])
+
+
+if __name__ == '__main__':
+    unittest.main()
