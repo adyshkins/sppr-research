@@ -1,0 +1,192 @@
+{
+  "episodes": 2880,
+  "physical_days": 172800,
+  "reviews": 83520,
+  "selector_comparisons": 250560,
+  "mismatches": 0,
+  "full_queries": 42762240,
+  "cost_queries": 27962496,
+  "natural_queries": 15393608,
+  "tail_queries": 11414272,
+  "proposal_queries": 13762560,
+  "risk_empty": 5895,
+  "pooled_saved_vs_full": 73.30759099616859,
+  "pooled_saved_vs_cost": 59.180067473232725,
+  "pooled_selector_speed": 2.731985240299974,
+  "pooled_with_common_speed": 1.3180235456372376,
+  "pooled_including_proposals_speed": 1.2229060759284356,
+  "pooled_total_queries_saved": 55.45878623188405,
+  "tail_worse_than_natural_cases": 902,
+  "tail_worse_than_natural_pct": 1.0799808429118773,
+  "shock_window_reviews": 16896,
+  "shock_window_saved_vs_full": 62.10586085464015,
+  "shock_window_saved_vs_cost": 53.020554353010226,
+  "validation_admitted": 2375,
+  "validation_exceed": 14,
+  "validation_exceed_pct": 0.5894736842105264,
+  "validation_max_risk": 1.356026184121322,
+  "validation_queries": 2432000,
+  "contrasts": [
+    {
+      "contrast": "tail_full",
+      "mean_pct": 74.06553758141085,
+      "lo_pct": 73.03839401561213,
+      "hi_pct": 75.08505059567828,
+      "blocks": 32
+    },
+    {
+      "contrast": "tail_cost",
+      "mean_pct": 65.84853310668703,
+      "lo_pct": 64.29207312429381,
+      "hi_pct": 67.44507572035913,
+      "blocks": 32
+    },
+    {
+      "contrast": "tail_natural",
+      "mean_pct": 24.057562661726546,
+      "lo_pct": 22.85813213097819,
+      "hi_pct": 25.218955195105025,
+      "blocks": 32
+    },
+    {
+      "contrast": "total_tail_full",
+      "mean_pct": 49.44621611150345,
+      "lo_pct": 48.83090752339376,
+      "hi_pct": 50.077810646359865,
+      "blocks": 32
+    }
+  ],
+  "grid": [
+    {
+      "lam": 0.0,
+      "filter": 0,
+      "reviews": 13920,
+      "full_mean": 512,
+      "cost_mean": 243.7425287356322,
+      "natural_mean": 180.17241379310346,
+      "tail_mean": 155.87471264367815,
+      "saved_vs_full": 69.55572018678161,
+      "saved_vs_cost": 36.04943977062662,
+      "selector_speed": 2.4103906739780854,
+      "with_common_speed": 1.288738604136785,
+      "empty": 0
+    },
+    {
+      "lam": 0.0,
+      "filter": 1,
+      "reviews": 13920,
+      "full_mean": 512,
+      "cost_mean": 265.2,
+      "natural_mean": 140.9367816091954,
+      "tail_mean": 117.53390804597701,
+      "saved_vs_full": 77.04415858477012,
+      "saved_vs_cost": 55.68103014857579,
+      "selector_speed": 3.1362195012089833,
+      "with_common_speed": 1.3507053107972193,
+      "empty": 2129
+    },
+    {
+      "lam": 0.35,
+      "filter": 0,
+      "reviews": 13920,
+      "full_mean": 512,
+      "cost_mean": 343.8344827586207,
+      "natural_mean": 210.80287356321838,
+      "tail_mean": 161.27758620689656,
+      "saved_vs_full": 68.50047144396552,
+      "saved_vs_cost": 53.09441190629012,
+      "selector_speed": 2.33253849093221,
+      "with_common_speed": 1.277891638257699,
+      "empty": 0
+    },
+    {
+      "lam": 0.35,
+      "filter": 1,
+      "reviews": 13920,
+      "full_mean": 512,
+      "cost_mean": 351.0252873563218,
+      "natural_mean": 171.90057471264367,
+      "tail_mean": 125.55114942528736,
+      "saved_vs_full": 75.47829112787356,
+      "saved_vs_cost": 64.23301854665479,
+      "selector_speed": 2.9550411705873487,
+      "with_common_speed": 1.3373975274019696,
+      "empty": 1924
+    },
+    {
+      "lam": 1.0,
+      "filter": 0,
+      "reviews": 13920,
+      "full_mean": 512,
+      "cost_mean": 401.0390804597701,
+      "natural_mean": 212.2793103448276,
+      "tail_mean": 136.32758620689654,
+      "saved_vs_full": 73.37351831896552,
+      "saved_vs_cost": 66.0064086396258,
+      "selector_speed": 2.7487370929233235,
+      "with_common_speed": 1.316711508765759,
+      "empty": 0
+    },
+    {
+      "lam": 1.0,
+      "filter": 1,
+      "reviews": 13920,
+      "full_mean": 512,
+      "cost_mean": 403.95862068965516,
+      "natural_mean": 189.77068965517242,
+      "tail_mean": 123.42586206896551,
+      "saved_vs_full": 75.89338631465517,
+      "saved_vs_cost": 69.44591456960426,
+      "selector_speed": 3.0259279546218747,
+      "with_common_speed": 1.340593059609923,
+      "empty": 1842
+    }
+  ],
+  "by_profile": [
+    {
+      "profile": "capacity",
+      "reviews": 16704,
+      "saved_vs_full": 71.44499446240422,
+      "saved_vs_cost": 62.76190081192912,
+      "selector_speed": 2.557576298238805,
+      "with_common_speed": 1.3005370621162453,
+      "including_proposals_speed": 1.2116755850634255
+    },
+    {
+      "profile": "combined",
+      "reviews": 16704,
+      "saved_vs_full": 70.93070896192528,
+      "saved_vs_cost": 59.71389681099299,
+      "selector_speed": 2.5037071841329372,
+      "with_common_speed": 1.2961824381294191,
+      "including_proposals_speed": 1.209125472454616
+    },
+    {
+      "profile": "demand",
+      "reviews": 16704,
+      "saved_vs_full": 70.95839694085248,
+      "saved_vs_cost": 59.07531899188021,
+      "selector_speed": 2.516561604163172,
+      "with_common_speed": 1.2969192890506265,
+      "including_proposals_speed": 1.2088256831117599
+    },
+    {
+      "profile": "normal",
+      "reviews": 16704,
+      "saved_vs_full": 80.07718959530652,
+      "saved_vs_cost": 55.510761672403994,
+      "selector_speed": 3.60280482195204,
+      "with_common_speed": 1.3814973267610497,
+      "including_proposals_speed": 1.2620230256664482
+    },
+    {
+      "profile": "supply",
+      "reviews": 16704,
+      "saved_vs_full": 73.12666502035441,
+      "saved_vs_cost": 56.912382266482695,
+      "selector_speed": 2.722146080776418,
+      "with_common_speed": 1.3174699053990901,
+      "including_proposals_speed": 1.2234432836008853
+    }
+  ]
+}

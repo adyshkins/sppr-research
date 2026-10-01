@@ -1,0 +1,4 @@
+ok  	spprcert/cert	(cached)
+?   	spprcert/cmd/study	[no test files]
+ok  	spprcert/experiment	2.425s
+ok  	spprcert/model	(cached)

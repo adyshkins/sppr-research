@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "snapshot_count": 15,
+  "full_matrix_rollouts": 7680,
+  "queried_losses_checked": 1912,
+  "bound_values_checked": 360,
+  "pruning_records_checked": 100,
+  "snapshot_selector_mismatches": 0,
+  "max_loss_abs_difference": 4.440892098500626e-16,
+  "max_score_abs_difference": 4.440892098500626e-16,
+  "replayed_reviews": 5220,
+  "replayed_reviews_deterministic_fields": 99180,
+  "replayed_episodes": 180,
+  "replayed_episodes_deterministic_fields": 2700,
+  "production_comparisons_checked": 250560,
+  "notes": [
+    "Replay excludes machine-dependent runtime fields.",
+    "Independent snapshots are engineering verification, not independent statistical replicates.",
+    "All bounds are conditional on the stated model and retained scenario weights."
+  ]
+}

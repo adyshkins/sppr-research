@@ -1,0 +1,8 @@
+/results/local-*/
+/results/reproduced*/
+/bin/
+__pycache__/
+*.pyc
+*.test
+*.exe
+/study

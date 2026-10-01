@@ -1,0 +1,349 @@
+// Package experiment implements NEW C12 experiments, not a replay of F10/E11.
+package experiment
+
+import (
+	"encoding/csv"
+	"encoding/json"
+	"fmt"
+	"math"
+	"math/rand"
+	"os"
+	"path/filepath"
+	"runtime"
+	"sort"
+	"spprcert/cert"
+	"spprcert/model"
+	"strconv"
+	"time"
+)
+
+type Options struct {
+	Repeats   int    `json:"repeats"`
+	FirstSeed int64  `json:"first_seed"`
+	Days      int    `json:"days"`
+	Scenarios int    `json:"scenarios"`
+	Horizon   int    `json:"horizon"`
+	Output    string `json:"output"`
+}
+type Snapshot struct {
+	State       model.State       `json:"state"`
+	Paths       [][]model.Forcing `json:"paths"`
+	Actions     []model.Action    `json:"actions"`
+	Candidates  []cert.Candidate  `json:"candidates"`
+	Config      cert.Config       `json:"config"`
+	Order       []int             `json:"order"`
+	Warm        int               `json:"warm"`
+	Certificate cert.Result       `json:"certificate"`
+}
+type Summary struct {
+	Options         Options `json:"options"`
+	Go              string  `json:"go"`
+	OS              string  `json:"os"`
+	Arch            string  `json:"arch"`
+	Episodes        int     `json:"episodes"`
+	Reviews         int     `json:"reviews"`
+	ProposalQueries int64   `json:"proposal_queries"`
+	FullQueries     int64   `json:"full_queries"`
+	CostQueries     int64   `json:"cost_queries"`
+	NaturalQueries  int64   `json:"natural_queries"`
+	TailQueries     int64   `json:"tail_queries"`
+	Mismatches      int     `json:"mismatches"`
+	Empty           int     `json:"empty"`
+	SavedSnapshots  int     `json:"saved_snapshots"`
+}
+
+func positive(x float64) float64 { return math.Max(0, x) }
+func f(x float64) string         { return strconv.FormatFloat(x, 'g', 17, 64) }
+func i(x int) string             { return strconv.Itoa(x) }
+func b(x bool) string {
+	if x {
+		return "1"
+	}
+	return "0"
+}
+func forcing(seed int64, profile, days int) []model.Forcing {
+	r := rand.New(rand.NewSource(seed + 149999))
+	out := make([]model.Forcing, days)
+	ar := [4]float64{}
+	start := 17 + r.Intn(7)
+	duration := 4 + r.Intn(5)
+	// Physical forcing has serial dependence and an abrupt finite shock. The
+	// controller forecasts mean-reverting noisy factors and is not given this tape.
+	for t := range out {
+		for j := range ar {
+			ar[j] = .65*ar[j] + .035*r.NormFloat64()
+		}
+		dA, dB, cap, raw := 1+ar[0], 1+ar[1], 1+ar[2], 1+ar[3]
+		if t >= start && t < start+duration {
+			switch profile {
+			case 1:
+				raw *= .3
+			case 2:
+				cap *= .5
+			case 3:
+				dA *= 1.35
+				dB *= 1.35
+			case 4:
+				dA *= 1.25
+				dB *= 1.25
+				raw *= .6
+			}
+		}
+		// Mild asymmetric demand and a second disturbance prevent perfectly repeated
+		// nominal paths. This specification is fixed before held-out seeds are run.
+		if t >= 40 && t < 45 && profile > 0 {
+			dA *= 1.1
+			dB *= .9
+		}
+		out[t] = model.Forcing{Demand: model.Pair{40 * positive(dA), 25 * positive(dB)}, Capacity: 100 * positive(cap), RawArrival: 90 * positive(raw)}
+	}
+	return out
+}
+func observe(s model.State, w model.Forcing, seed int64, day int) (model.State, model.Forcing) {
+	r := rand.New(rand.NewSource(seed + 140000 + int64(day)))
+	noise := func(x float64) float64 { return positive(x * (1 + .02*r.NormFloat64())) }
+	o := s
+	o.Raw = noise(s.Raw)
+	for j := 0; j < 2; j++ {
+		o.Finished[j] = noise(s.Finished[j])
+		o.Backlog[j] = noise(s.Backlog[j])
+		w.Demand[j] = noise(w.Demand[j])
+	}
+	w.Capacity = noise(w.Capacity)
+	w.RawArrival = noise(w.RawArrival)
+	return o, w
+}
+func scenarios(w model.Forcing, seed int64, day, n, horizon int) [][]model.Forcing {
+	out := make([][]model.Forcing, n)
+	for s := range out {
+		r := rand.New(rand.NewSource(seed + int64(day)*1024 + int64(s)))
+		out[s] = make([]model.Forcing, horizon)
+		common := r.NormFloat64()
+		for h := range out[s] {
+			decay := math.Pow(.85, float64(h))
+			dA := 40 + decay*(w.Demand[0]-40)
+			dB := 25 + decay*(w.Demand[1]-25)
+			c := 100 + math.Pow(.65, float64(h))*(w.Capacity-100)
+			a := 90 + math.Pow(.75, float64(h))*(w.RawArrival-90)
+			// Mixture tails are independent of the realized physical future.
+			shock := 1.0
+			if r.Float64() < .06 {
+				shock = 1.35
+			}
+			out[s][h] = model.Forcing{Demand: model.Pair{positive(dA * (1 + .045*common + .045*r.NormFloat64()) * shock), positive(dB * (1 + .045*common + .045*r.NormFloat64()) * shock)}, Capacity: positive(c * (1 + .06*r.NormFloat64())), RawArrival: positive(a * (1 + .07*r.NormFloat64()))}
+		}
+	}
+	return out
+}
+func catalog(obs model.State, w model.Forcing) ([]model.Action, []cert.Candidate) {
+	a := model.Catalog(obs, w.Demand)
+	c := make([]cert.Candidate, len(a))
+	for j, v := range a {
+		c[j] = cert.Candidate{ID: v.ID, Cost: v.Cost, Distance: v.Distance, Hard: true}
+	}
+	return a, c
+}
+func orders(paths [][]model.Forcing) ([]int, []int) {
+	n := len(paths)
+	natural := make([]int, n)
+	tail := make([]int, n)
+	severity := make([]float64, n)
+	for s, p := range paths {
+		natural[s] = s
+		tail[s] = s
+		for _, w := range p {
+			severity[s] += w.Demand[0]/40 + w.Demand[1]/25 + positive(1-w.Capacity/100) + positive(1-w.RawArrival/90)
+		}
+	}
+	sort.SliceStable(tail, func(i, j int) bool { return severity[tail[i]] > severity[tail[j]] })
+	return natural, tail
+}
+func runDecision(obs model.State, w model.Forcing, seed int64, day int, cfg cert.Config, n, horizon, warm int, all, trace bool) (map[string]cert.Result, map[string]int64, Snapshot, error) {
+	commonStart := time.Now()
+	paths := scenarios(w, seed, day, n, horizon)
+	a, c := catalog(obs, w)
+	orderStart := time.Now()
+	nat, tail := orders(paths)
+	orderNS := time.Since(orderStart).Nanoseconds()
+	commonNS := time.Since(commonStart).Nanoseconds() - orderNS
+	res := map[string]cert.Result{}
+	ns := map[string]int64{"common": commonNS}
+	modes := []string{"full"}
+	if all {
+		modes = []string{"full", "cost", "natural", "tail"}
+	}
+	// Rotation prevents a permanently privileged warm-cache timing position.
+	shift := (day + int((seed/1000000)%4)) % len(modes)
+	for step := 0; step < len(modes); step++ {
+		mode := modes[(step+shift)%len(modes)]
+		order := nat
+		if mode == "tail" {
+			order = tail
+		}
+		oracle := func(j, s int) (float64, error) { return model.Rollout(obs, paths[s], a[j], 1), nil }
+		start := time.Now()
+		v, err := cert.Select(c, n, cfg, order, warm, mode, oracle, trace && mode == "tail")
+		ns[mode] = time.Since(start).Nanoseconds()
+		if mode == "tail" {
+			ns[mode] += orderNS
+		}
+		if err != nil {
+			return nil, nil, Snapshot{}, err
+		}
+		res[mode] = v
+	}
+	snap := Snapshot{obs, paths, a, c, cfg, tail, warm, res["tail"]}
+	if trace && all {
+		if err := cert.VerifyTrace(c, n, cfg, tail, warm, "tail", res["tail"]); err != nil {
+			return nil, nil, snap, err
+		}
+	}
+	return res, ns, snap, nil
+}
+func Run(opt Options) (Summary, error) {
+	runtime.GOMAXPROCS(1)
+	s := Summary{Options: opt, Go: runtime.Version(), OS: runtime.GOOS, Arch: runtime.GOARCH}
+	if opt.Repeats < 1 || opt.Repeats > 1000 || opt.FirstSeed < 0 || opt.FirstSeed > 1000000000 || opt.Days < 10 || opt.Days > 64 || opt.Scenarios < 1 || opt.Scenarios > 1024 || opt.Horizon < 1 {
+		return s, fmt.Errorf("invalid experiment options")
+	}
+	if err := os.MkdirAll(filepath.Join(opt.Output, "snapshots"), 0755); err != nil {
+		return s, err
+	}
+	cf, err := os.Create(filepath.Join(opt.Output, "reviews.csv"))
+	if err != nil {
+		return s, err
+	}
+	defer cf.Close()
+	cw := csv.NewWriter(cf)
+	defer cw.Flush()
+	cw.Write([]string{"seed", "profile", "delay", "lambda", "filter", "day", "choice", "reason", "objective", "risk", "full_queries", "cost_queries", "natural_queries", "tail_queries", "full_ns", "cost_ns", "natural_ns", "tail_ns", "tail_risk_pruned", "tail_objective_pruned", "tail_bound_checks", "common_ns", "validation_risk", "validation_queries"})
+	ef, err := os.Create(filepath.Join(opt.Output, "episodes.csv"))
+	if err != nil {
+		return s, err
+	}
+	defer ef.Close()
+	ew := csv.NewWriter(ef)
+	defer ew.Flush()
+	ew.Write([]string{"seed", "profile", "delay", "lambda", "filter", "loss", "backlog_area", "action_cost", "reviews", "risk_empty", "proposal_queries", "full_queries", "cost_queries", "natural_queries", "tail_queries", "proposal_ns", "review_common_ns", "review_full_ns", "review_tail_ns"})
+	profiles := []string{"normal", "supply", "capacity", "demand", "combined"}
+	delays := []int{0, 2, 5}
+	for rep := 0; rep < opt.Repeats; rep++ {
+		seed := opt.FirstSeed + int64(rep)
+		for profile, name := range profiles {
+			streamBase := seed*1000000 + int64(profile)*150000
+			tape := forcing(streamBase, profile, opt.Days)
+			for _, delay := range delays {
+				for _, lambda := range []float64{0, .35, 1} {
+					for _, filter := range []bool{false, true} {
+						cfg := cert.Config{Lambda: lambda, Filter: filter, Limit: 1.25, TailDenominator: 20, Block: 8}
+						state := model.Initial()
+						assigned := model.Baseline()
+						due := -1
+						warm := -1
+						var loss, backlog, cost float64
+						eq := map[string]int{}
+						epProp, reviews, empty := 0, 0, 0
+						var epPropNS, epCommonNS, epFullNS, epTailNS int64
+						for day, w := range tape {
+							r := model.Step(state, w, assigned)
+							state = r.Next
+							loss += r.Loss + assigned.Cost
+							backlog += r.Backlog
+							cost += assigned.Cost
+							assigned = model.Baseline()
+							obs, ow := observe(state, w, streamBase, day)
+							if due < 0 && day+delay < opt.Days-1 {
+								due = day + delay
+								warm = -1
+								if delay > 0 {
+									p, pns, _, e := runDecision(obs, ow, streamBase, day, cfg, opt.Scenarios, opt.Horizon, -1, false, false)
+									if e != nil {
+										return s, e
+									}
+									warm = p["full"].Choice
+									epProp += p["full"].Queries
+									epPropNS += pns["common"] + pns["full"]
+								}
+							}
+							if due == day {
+								capture := rep == 0 && lambda == .35 && filter && day >= 20 && day < 20+delay+1
+								vals, ns, snap, e := runDecision(obs, ow, streamBase, day, cfg, opt.Scenarios, opt.Horizon, warm, true, capture)
+								if e != nil {
+									return s, e
+								}
+								full := vals["full"]
+								epCommonNS += ns["common"]
+								epFullNS += ns["full"]
+								epTailNS += ns["tail"]
+								for _, mode := range []string{"cost", "natural", "tail"} {
+									v := vals[mode]
+									if v.Choice != full.Choice || v.Reason != full.Reason || v.Score != full.Score {
+										s.Mismatches++
+										return s, fmt.Errorf("selector mismatch seed %d profile %s day %d mode %s", seed, name, day, mode)
+									}
+								}
+								if full.Choice >= 0 {
+									assigned = model.Catalog(obs, ow.Demand)[full.Choice]
+								} else {
+									empty++
+								}
+								reviews++
+								s.Reviews++
+								due = -1
+								for mode, v := range vals {
+									eq[mode] += v.Queries
+								}
+								v := vals["tail"]
+								validationRisk := ""
+								validationQueries := "0"
+								// Independent scenario validation is NOT used for selection,
+								// screening order, tuning, or timing comparisons.
+								if lambda == .35 && filter && delay == 2 && full.Choice >= 0 {
+									vp := scenarios(ow, streamBase+70000, day, 1024, opt.Horizon)
+									va := model.Catalog(obs, ow.Demand)[full.Choice]
+									vz := make([]float64, len(vp))
+									for vs := range vp {
+										vz[vs] = model.Rollout(obs, vp[vs], va, 1)
+									}
+									validationRisk = f(cert.Evaluate(vz, cfg).Risk)
+									validationQueries = "1024"
+								}
+								cw.Write([]string{strconv.FormatInt(seed, 10), name, i(delay), f(lambda), b(filter), i(day), i(full.Choice), full.Reason, f(full.Score.Objective), f(full.Score.Risk), i(full.Queries), i(vals["cost"].Queries), i(vals["natural"].Queries), i(v.Queries), strconv.FormatInt(ns["full"], 10), strconv.FormatInt(ns["cost"], 10), strconv.FormatInt(ns["natural"], 10), strconv.FormatInt(ns["tail"], 10), i(v.RiskPruned), i(v.ObjectivePruned), i(v.BoundChecks), strconv.FormatInt(ns["common"], 10), validationRisk, validationQueries})
+								if capture {
+									data, _ := json.Marshal(snap)
+									path := filepath.Join(opt.Output, "snapshots", fmt.Sprintf("%s_d%d_t%d.json", name, delay, day))
+									if err := os.WriteFile(path, data, 0644); err != nil {
+										return s, err
+									}
+									s.SavedSnapshots++
+								}
+							}
+						}
+						s.Episodes++
+						s.Empty += empty
+						s.ProposalQueries += int64(epProp)
+						s.FullQueries += int64(eq["full"])
+						s.CostQueries += int64(eq["cost"])
+						s.NaturalQueries += int64(eq["natural"])
+						s.TailQueries += int64(eq["tail"])
+						ew.Write([]string{strconv.FormatInt(seed, 10), name, i(delay), f(lambda), b(filter), f(loss), f(backlog), f(cost), i(reviews), i(empty), i(epProp), i(eq["full"]), i(eq["cost"]), i(eq["natural"]), i(eq["tail"]), strconv.FormatInt(epPropNS, 10), strconv.FormatInt(epCommonNS, 10), strconv.FormatInt(epFullNS, 10), strconv.FormatInt(epTailNS, 10)})
+					}
+				}
+			}
+		}
+		cw.Flush()
+		ew.Flush()
+		fmt.Fprintf(os.Stderr, "repeat %d/%d: episodes=%d reviews=%d mismatches=%d\n", rep+1, opt.Repeats, s.Episodes, s.Reviews, s.Mismatches)
+	}
+	cw.Flush()
+	ew.Flush()
+	if cw.Error() != nil {
+		return s, cw.Error()
+	}
+	if ew.Error() != nil {
+		return s, ew.Error()
+	}
+	data, _ := json.MarshalIndent(s, "", "  ")
+	err = os.WriteFile(filepath.Join(opt.Output, "summary.json"), data, 0644)
+	return s, err
+}

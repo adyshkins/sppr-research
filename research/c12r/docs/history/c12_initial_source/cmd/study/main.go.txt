@@ -1,0 +1,27 @@
+package main
+
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+	"os"
+	"spprcert/experiment"
+)
+
+func main() {
+	o := experiment.Options{}
+	flag.IntVar(&o.Repeats, "repeats", 32, "independent environment seeds")
+	flag.Int64Var(&o.FirstSeed, "seed", 200001, "first held-out seed")
+	flag.IntVar(&o.Days, "days", 60, "physical days")
+	flag.IntVar(&o.Scenarios, "scenarios", 64, "forecast scenarios")
+	flag.IntVar(&o.Horizon, "horizon", 7, "forecast horizon")
+	flag.StringVar(&o.Output, "out", "results/c12", "output directory")
+	flag.Parse()
+	s, e := experiment.Run(o)
+	if e != nil {
+		fmt.Fprintln(os.Stderr, e)
+		os.Exit(1)
+	}
+	b, _ := json.MarshalIndent(s, "", "  ")
+	fmt.Println(string(b))
+}

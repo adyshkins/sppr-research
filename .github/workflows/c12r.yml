@@ -1,0 +1,29 @@
+name: Verify C12-R module
+on:
+  push:
+    paths: ['research/c12r/**', '.github/workflows/c12r.yml']
+  pull_request:
+    paths: ['research/c12r/**', '.github/workflows/c12r.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-c12r:
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: 'off'
+    defaults:
+      run:
+        working-directory: research/c12r
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.2'
+          cache: false
+      - run: python3 verify_manifest.py
+      - run: go test -race ./... && go vet ./...
+      - run: |
+          audit_dir=$(mktemp -d)
+          cp -R . "$audit_dir/c12r"
+          (cd "$audit_dir/c12r" && python3 audit.py)

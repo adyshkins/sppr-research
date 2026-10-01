@@ -1,0 +1,23 @@
+{
+  "options": {
+    "repeats": 2,
+    "first_seed": 300001,
+    "days": 60,
+    "scenarios": 64,
+    "horizon": 7,
+    "output": "results/replay_final"
+  },
+  "go": "go1.23.2",
+  "os": "linux",
+  "arch": "amd64",
+  "episodes": 180,
+  "reviews": 5220,
+  "proposal_queries": 860160,
+  "full_queries": 2672640,
+  "cost_queries": 1768704,
+  "natural_queries": 947224,
+  "tail_queries": 717000,
+  "mismatches": 0,
+  "empty": 507,
+  "saved_snapshots": 15
+}
